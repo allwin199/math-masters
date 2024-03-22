@@ -45,6 +45,54 @@ library MathMasters {
         }
     }
 
+    // `mulWad` Explanation
+    // Equivalent to `(x * y) / WAD` rounded down.
+    // WAD is 1e18
+    // mul(y, gt(x, div(not(0), y)))
+    // let's breakdown the above
+    // mul(y,
+    //      gt(x,
+    //          div(
+    //              not(0),
+    //              y
+    //          )
+    //      )
+    // )
+    // ➜ uint256 x = 0x01  // let's assign x to 0x01 which is 1 in decminal
+    // ➜ x
+    // ├ Hex: 0x0000000000000000000000000000000000000000000000000000000000000001   // hex version of 1
+    // ➜ assembly{x := not(x)} //let's do not(x)
+    // ➜ x
+    // ├ Hex: 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe
+    // If we observe the x
+    // everything is flipped
+    // which means whatever in 0 was flipped to 1
+    // and whatever in 0 was flipped to 1
+    // similar to NOT operation in binary
+    // eg: 0000 0001
+    // not operation on the above binary
+    // 1111 1110
+
+    // assembly {x := not(0)}
+    // ➜ x
+    // ├ Hex: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+    // Therfore `not(0)` generates the above number in x
+    // which is converting everything to 1
+
+    // div(not(0), y)
+    // div opcode => x/y or 0 if y == 0
+    // whatever the value of `not(0)` it is divided by `y`
+
+    // gt(x, div(not(0), y))
+    // `div(not(0), y)` we know the process and assume it as `y`
+    // gt(x, y) opcode => 1 if x > y, 0 otherwise
+
+    // mul(y, gt(x, div(not(0), y)))
+    // finally we are multiplying with `y`
+
+    // let's say
+    // max uint256 = 10
+
     /// @dev Equivalent to `(x * y) / WAD` rounded up.
     function mulWadUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
         /// @solidity memory-safe-assembly
